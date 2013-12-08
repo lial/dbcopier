@@ -1,8 +1,8 @@
 <?php
 /******
  * DB table fields Copier v.1.0
- * @Autor: Alex Lifantyev
- * @Email: al@arte.kz
+ * @autor: Alex Lifantyev <al@arte.kz>
+ *
  * This script can help you to transfer data between DBs with incompatible structures,
  * when you need to migrate from old version to new with semi-manual comparing mode.
  *****/
@@ -21,6 +21,7 @@ require_once('./config.php');
 </head>
 <body>
 	<div class="container">
+		<div class="row"><div align="center" class="col-sm-12 col-md-12 col-lg-12"><h1>DB  table fields Copier</h1></div></div>
 		<div class="row"><div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
 			<div id="msg_error" class="alert alert-danger">
 				<button class="close" aria-hidden="true" data-dismiss="alert" type="button">&times;</button>
@@ -105,11 +106,17 @@ if ($mysqli) $mysqli->close();
 			var tbs = $('#source_table option:selected').val();
 			var tbd = $('#destination_table option:selected').val();
 			var cs = [];
+			var ds = [];
 
 			var columns = $('select[name=cs] option:selected');
 			columns.each(function(i, el){
 				cs.push(this.value);
 			 });
+
+			var columns = $('select[name=ds] option:selected');
+			columns.each(function(i, el){
+				ds.push(this.value);
+			});
 
 			$.ajax({
 				type: 'POST',
@@ -121,6 +128,7 @@ if ($mysqli) $mysqli->close();
 					tbs: tbs,
 					tbd: tbd,
 					cs: cs,
+					ds: ds
 				},
 				async: false,
 				success: function(data){alert(data);
@@ -132,6 +140,8 @@ if ($mysqli) $mysqli->close();
 		//SOURCE
 		$('#source_table').bind('change keydown', function(){
 			$('#source_columns').show();
+			$('#source_columns select:first').empty();
+			$('#source_columns select:not(:first)').remove();
 			var db = $('#source_db option:selected').val();
 			var table = $('#source_table option:selected').val();
 			var html = $.ajax({
@@ -226,6 +236,8 @@ if ($mysqli) $mysqli->close();
 		//DESTINATION
 		$('#destination_table').bind('change keydown', function(){
 			$('#destination_columns').show();
+			$('#destination_columns select:first').empty();
+			$('#destination_columns select:not(:first)').remove();
 			var db = $('#destination_db option:selected').val();
 			var table = $('#destination_table option:selected').val();
 			var html = $.ajax({

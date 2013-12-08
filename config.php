@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * DB table fields Copier v.1.0
+ * @autor: Alex Lifantyev <al@arte.kz>
+ */
+
 $db = array(
 	'host' => 'localhost',
 	'database' => '',
-	'user' => 'usersource',
-	'password' => 'EwRXwfvrhtA3BnML'
+	'user' => '',
+	'password' => ''
 	);
 
 $mysqli = mysqli_init();
@@ -14,7 +19,7 @@ if (!$mysqli) {
 }
 
 $res = true;
-$res = $res && $mysqli->options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0');
+$res = $res && $mysqli->options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 1');
 $res = $res && $mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
 
 if (!$res) {
