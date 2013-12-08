@@ -70,7 +70,7 @@ echo '<div id="destination_tables" class="form-group"><label for="destination_ta
 echo '</select></div>'; //form-group
 
 echo '<div id="destination_columns" class="form-group"><label for="destination_column">Select column</label><select name="ds" id="destination_column" class="form-control">';
-echo '</select></div>'; //form-group
+echo '</select><button id="add_d" class="btn btn-default glyphicon glyphicon-plus"></button><button id="remove_d" class="btn btn-default glyphicon glyphicon-minus"></button></div>'; //form-group
 echo '</div>';
 
 if ($mysqli) $mysqli->close();
@@ -86,8 +86,6 @@ if ($mysqli) $mysqli->close();
 		var $total_fields_s_max = 0;
 		var $total_fields_d = 0;
 		var $total_fields_d_max = 0;
-		var $disable_plus = true;
-		var $disable_minus = true;
 
 		$(function(){
 			$('#source_tables, #source_columns, #destination_tables, #destination_columns, #msg_error').hide();
@@ -144,6 +142,7 @@ if ($mysqli) $mysqli->close();
 			
 			$disable_plus = true;
 			$disable_minus = true;
+
 			$total_fields_s_max = $('#source_column option').length;
 
 			if ($total_fields_s_max < 1) {
@@ -183,6 +182,9 @@ if ($mysqli) $mysqli->close();
 			
 			$total_fields_s++;
 
+			var $disable_plus = true;
+			var $disable_minus = true;
+
 			if ($total_fields_s > 1) {
 				$disable_plus = false;
 				$disable_minus = false;
@@ -203,6 +205,8 @@ if ($mysqli) $mysqli->close();
 			$curr.remove();
 
 			$total_fields_s--;
+			var $disable_plus = true;
+			var $disable_minus = true;
 
 			if ($total_fields_s > 1) {
 				$disable_plus = false;
@@ -210,7 +214,11 @@ if ($mysqli) $mysqli->close();
 			} else {
 				$disable_minus = true;
 			}
-			
+
+			if ($total_fields_s < $total_fields_s_max) {
+				$disable_plus = false;
+			}
+
 			$('button#add_s').prop('disabled', $disable_plus);
 			$('button#remove_s').prop('disabled', $disable_minus);
 		});
@@ -225,6 +233,25 @@ if ($mysqli) $mysqli->close();
   				async: false
  				}).responseText;
 			$('#destination_column').html(html);
+
+			$disable_plus = true;
+			$disable_minus = true;
+
+			$total_fields_d_max = $('#destination_column option').length;
+
+			if ($total_fields_d_max < 1) {
+				$total_fields_d = 0;
+			} else {
+				$total_fields_d = 1;
+				$disable_plus = false;
+			}
+
+			if ($total_fields_d == $total_fields_d_max) {
+				$disable_plus = true;
+			}
+
+			$('button#add_d').prop('disabled', $disable_plus);
+			$('button#remove_d').prop('disabled', $disable_minus);
 		});
 
 		
@@ -238,6 +265,55 @@ if ($mysqli) $mysqli->close();
   				async: false
  				}).responseText;
 			$('#destination_table').html(html);
+		});
+
+		$('button#add_d').click(function(b){
+			b.preventDefault();
+			var $curr = $('button#add_d');
+			$curr = $curr.prev();
+			$curr.clone(true).insertBefore(this);
+
+			$total_fields_d++;
+
+			var $disable_plus = true;
+			var $disable_minus = true;
+
+			if ($total_fields_d > 1) {
+				$disable_plus = false;
+				$disable_minus = false;
+			}
+
+			if ($total_fields_d >= $total_fields_d_max) {
+				$disable_plus = true;
+			}
+
+			$('button#add_d').prop('disabled', $disable_plus);
+			$('button#remove_d').prop('disabled', $disable_minus);
+		});
+
+		$('button#remove_d').click(function(b){
+			b.preventDefault();
+			var $curr = $('button#add_d');
+			$curr = $curr.prev();
+			$curr.remove();
+
+			$total_fields_d--;
+			var $disable_plus = true;
+			var $disable_minus = true;
+
+			if ($total_fields_d > 1) {
+				$disable_plus = false;
+				$disable_minus = false;
+			} else {
+				$disable_minus = true;
+			}
+
+			if ($total_fields_d < $total_fields_d_max) {
+				$disable_plus = false;
+			}
+
+			$('button#add_d').prop('disabled', $disable_plus);
+			$('button#remove_d').prop('disabled', $disable_minus);
 		});
 	</script>
 </body>
