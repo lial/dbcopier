@@ -52,8 +52,8 @@ echo '</select></div>'; //form-group
 echo '<div id="source_tables" class="form-group"><label for="source_table">Select table</label><select id="source_table" class="form-control">';
 echo '</select></div>'; //form-group
 
-echo '<div id="source_columns" class="form-group"><label for="source_column">Select column</label><select id="source_column" class="form-control">';
-echo '</select></div>'; //form-group
+echo '<div id="source_columns" class="form-group"><label for="source_column">Select column</label><select name="cs" id="source_column" class="form-control">';
+echo '</select><button id="add" class="btn btn-default glyphicon glyphicon-plus"></button></div>'; //form-group
 echo '</div>';
 
 
@@ -69,7 +69,7 @@ echo '</select></div>'; //form-group
 echo '<div id="destination_tables" class="form-group"><label for="destination_table">Select table</label><select id="destination_table" class="form-control">';
 echo '</select></div>'; //form-group
 
-echo '<div id="destination_columns" class="form-group"><label for="destination_column">Select column</label><select id="destination_column" class="form-control">';
+echo '<div id="destination_columns" class="form-group"><label for="destination_column">Select column</label><select name="ds" id="destination_column" class="form-control">';
 echo '</select></div>'; //form-group
 echo '</div>';
 
@@ -77,10 +77,7 @@ if ($mysqli) $mysqli->close();
 ?>
 			</div> <!-- row -->
 			<hr>
-			<div class="row">
-				<button type="submit" class="btn btn-primary btn-lg">Copy from Source to Destination</button>
-				<button class="btn btn-lg btn-default pull-right">Add column</button>
-			</div>
+			<div class="row"><button id="submit" type="submit" class="btn btn-primary btn-lg">Copy from Source to Destination</button></div>
 		</form>
 	</div> <!-- container -->
 	
@@ -89,10 +86,58 @@ if ($mysqli) $mysqli->close();
 			$('#source_tables, #source_columns, #destination_tables, #destination_columns, #msg_error').hide();
 		});
 
-		$('#msg_error').ajaxError(function(event, request, setting){
-			$(this).html('Error requesting page ' + setting.url);
+		$('#msg_error').ajaxError(function(event, request, settings){
+			$(this).apend('Error requesting page ' + settings.url);
 		});
 		
+		$('button[type=submit]').click(function(b){b.preventDefault(); ajax_copy();});
+		
+		$('button#add').click(function(b){
+			b.preventDefault();
+			var $curr = $('button#add');
+			$curr = $curr.prev();
+			$curr.clone(true).insertBefore(this);
+		});
+
+		function row_copy(button) {
+			var sel = button.clone(true);
+			sel.insertAfter(button);
+			//alert(this+'+ clicked')
+
+		}
+
+		function ajax_copy() {
+			var b = $('button[type=submit]');
+			b.prop('disabled', true);
+			var dbs = $('#source_db option:selected').val();
+			var dbd = $('#destination_db option:selected').val();
+			var tbs = $('#source_table option:selected').val();
+			var tbd = $('#destination_table option:selected').val();
+			var cs = [];
+
+			var columns = $('select[name=cs] option:selected');
+			columns.each(function(i, el){
+				cs.push(this.value);
+			 });
+
+			$.ajax({
+				type: 'POST',
+				cache: false,
+				url: 'copy.php',
+				data: {
+					dbs: dbs, 
+					dbd: dbd,
+					tbs: tbs,
+					tbd: tbd,
+					cs: cs,
+				},
+				async: false,
+				success: function(data){alert(data);
+				}
+				});
+			b.prop('disabled', false);
+		}
+
 		//SOURCE
 		$('#source_table').bind('change keydown', function(){
 			$('#source_columns').show();
