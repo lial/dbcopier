@@ -53,7 +53,7 @@ echo '<div id="source_tables" class="form-group"><label for="source_table">Selec
 echo '</select></div>'; //form-group
 
 echo '<div id="source_columns" class="form-group"><label for="source_column">Select column</label><select name="cs" id="source_column" class="form-control">';
-echo '</select><button id="add" class="btn btn-default glyphicon glyphicon-plus"></button></div>'; //form-group
+echo '</select><button id="add_s" class="btn btn-default glyphicon glyphicon-plus"></button><button id="remove_s" class="btn btn-default glyphicon glyphicon-minus"></button></div>'; //form-group
 echo '</div>';
 
 
@@ -82,6 +82,13 @@ if ($mysqli) $mysqli->close();
 	</div> <!-- container -->
 	
 	<script>
+		var $total_fields_s = 0;
+		var $total_fields_s_max = 0;
+		var $total_fields_d = 0;
+		var $total_fields_d_max = 0;
+		var $disable_plus = true;
+		var $disable_minus = true;
+
 		$(function(){
 			$('#source_tables, #source_columns, #destination_tables, #destination_columns, #msg_error').hide();
 		});
@@ -91,20 +98,6 @@ if ($mysqli) $mysqli->close();
 		});
 		
 		$('button[type=submit]').click(function(b){b.preventDefault(); ajax_copy();});
-		
-		$('button#add').click(function(b){
-			b.preventDefault();
-			var $curr = $('button#add');
-			$curr = $curr.prev();
-			$curr.clone(true).insertBefore(this);
-		});
-
-		function row_copy(button) {
-			var sel = button.clone(true);
-			sel.insertAfter(button);
-			//alert(this+'+ clicked')
-
-		}
 
 		function ajax_copy() {
 			var b = $('button[type=submit]');
@@ -148,6 +141,24 @@ if ($mysqli) $mysqli->close();
   				async: false
  				}).responseText;
 			$('#source_column').html(html);
+			
+			$disable_plus = true;
+			$disable_minus = true;
+			$total_fields_s_max = $('#source_column option').length;
+
+			if ($total_fields_s_max < 1) {
+				$total_fields_s = 0;
+			} else {
+				$total_fields_s = 1;
+				$disable_plus = false;
+			}
+
+			if ($total_fields_s == $total_fields_s_max) {
+				$disable_plus = true;
+			}
+
+			$('button#add_s').prop('disabled', $disable_plus);
+			$('button#remove_s').prop('disabled', $disable_minus);
 		});
 
 		$('#source_db').bind('change keydown', function(){
@@ -158,9 +169,50 @@ if ($mysqli) $mysqli->close();
 			$.ajax({
   				url: 'query.php?db='+db,
   				async: false,
-  				success: function(data){$('#source_table').html(data);},
-  				//error: function(data){$('#msg_error').prepend(data.responseText);$('#msg_error').removeClass('hidden');}
- 				});
+  				success: function(data){
+				    $('#source_table').html(data);
+			    }
+ 			});
+		});
+
+		$('button#add_s').click(function(b){
+			b.preventDefault();
+			var $curr = $('button#add_s');
+			$curr = $curr.prev();
+			$curr.clone(true).insertBefore(this);
+			
+			$total_fields_s++;
+
+			if ($total_fields_s > 1) {
+				$disable_plus = false;
+				$disable_minus = false;
+			}
+
+			if ($total_fields_s >= $total_fields_s_max) {
+				$disable_plus = true;
+			}
+			
+			$('button#add_s').prop('disabled', $disable_plus);
+			$('button#remove_s').prop('disabled', $disable_minus);
+		});
+
+		$('button#remove_s').click(function(b){
+			b.preventDefault();
+			var $curr = $('button#add_s');
+			$curr = $curr.prev();
+			$curr.remove();
+
+			$total_fields_s--;
+
+			if ($total_fields_s > 1) {
+				$disable_plus = false;
+				$disable_minus = false;
+			} else {
+				$disable_minus = true;
+			}
+			
+			$('button#add_s').prop('disabled', $disable_plus);
+			$('button#remove_s').prop('disabled', $disable_minus);
 		});
 
 		//DESTINATION
