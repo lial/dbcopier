@@ -11,7 +11,7 @@ It was need to do it manually controlled, so I wrote this script to do it a bit 
 4. Choose columns in tables you would like to transfer from one table to another. You should add the same quantity of rows with similar types.
 5. Click Copy button. If data copied successfully you will get a message about how many records inserted, otherwise error description with SQL statement.
 
-<h4>Discalimer</h4>
+<h4>Disclaimer</h4>
 Script doesn't care about your input errors, SQL-injections or something like that, also you have to understand what you do and why. It's just simple interface for "copy-paste" data from one table to another, that encapsulates ordinary INSERT SELECT query.
 
 <h4>Screenshots</h4>
