@@ -1,8 +1,11 @@
 <?php
 
-require_once('./config.php');
+/**
+ * DB table fields Copier v.1.0
+ * @autor: Alex Lifantyev <al@arte.kz>
+ */
 
-//$mysqli = (!empty($_GET['direction']) && $_GET['direction'] == 'destination') ? $destination : $source;
+require_once('./config.php');
 
 $db = (!empty($_GET['db'])) ? $mysqli->real_escape_string(strip_tags($_GET['db'])) : NULL;
 $table = (!empty($_GET['table'])) ? $mysqli->real_escape_string(strip_tags($_GET['table'])) : NULL;
