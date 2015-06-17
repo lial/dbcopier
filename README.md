@@ -1,5 +1,5 @@
 #DB Copier
-Copy your data from one MySQL database table to another by columns
+Copy your data from one MySQL database table to another by columns, that has different names or structure
 
 One time I faced with problem to transfer data from one MySQL database to another that has absolutely different structures, but not data.
 It was need to do it manually controlled, so I wrote this script to do it a bit easier.
